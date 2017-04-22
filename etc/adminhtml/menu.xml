@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Backend/etc/menu.xsd">
+    <menu>
+        <add id="Renouard_Megamenu::parent" title="Megamenu" module="Renouard_Megamenu" sortOrder="100" resource="Renouard_Megamenu::parent"/>
+		<add id="Renouard_Megamenu::megamenu" title="Renouard Megamenu" module="Renouard_Megamenu" sortOrder="20" parent="Renouard_Megamenu::parent" action="megamenu/megamenu" resource="Renouard_Megamenu::megamenu"/>
+
+    </menu>
+</config>

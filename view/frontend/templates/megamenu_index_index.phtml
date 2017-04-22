@@ -1,0 +1,102 @@
+<?php 
+$objectManager =  \Magento\Framework\App\ObjectManager::getInstance();  
+$abstractProductBlock = $block->getLayout()->createBlock('\Magento\Catalog\Block\Product\AbstractProduct');
+$listBlock = $objectManager->get('\Magento\Catalog\Block\Product\ListProduct');
+$_Symbol = $objectManager->create('Magento\Directory\Model\CurrencyFactory')->create()->load("EUR");
+$symbCurrency = $_Symbol->getCurrencySymbol();
+$appState = $objectManager->get('\Magento\Framework\App\State');
+$productCollectionFactory = $objectManager->get('\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory');
+$collection = $productCollectionFactory->create()
+           ->addAttributeToSelect('*')
+           ->addAttributeToSort('created_at', 'DESC');
+//$collection->setPageSize(3); // selecting only 3 products
+ $_imagehelper = $this->helper('Magento\Catalog\Helper\Image');
+ ?>
+
+<div class="row" >
+    <div class="container-fluid">
+         <div class="row-fluid">
+              <span class="h1" ><?php echo __("Selection Renouard"); ?></span> 
+               <section class="desktop-section-select-renouard" >
+           <ul class="list-group-horizontal">
+                <?php  foreach ($collection as $product): ?> 
+                    <?php if($product->getSelectionRenouard()==1): ?>
+                    <li class="list-group-item"> 
+                        <a href="<?php echo $product->getProductUrl(); ?>" >
+                        <img src="<?php echo $block->getUrl('pub/media/catalog').'product'.$product->getImage(); ?>" width="377" height="351" class="img-responsive" >
+                        <p>
+                            <span> 
+                            <?php echo $product->getName(); ?>
+                            </span>
+                        </p>
+                         </a>
+                         <span class="hm-price"><?php echo ($product->getSpecialPrice()!=null)?ceil($product->getSpecialPrice())." ".$symbCurrency." - ".__('Prix de base* ').ceil($product->getPrice())." ".$symbCurrency: ceil($product->getPrice())." ".$symbCurrency;//$abstractProductBlock->getProductPrice($product) ?></span>
+                        
+                        <form data-role="tocart-form" action="<?php echo $listBlock->getAddToCartUrl($product); ?>" method="post"> 
+                            <?php echo $block->getBlockHtml('formkey')?>
+                              <button type="submit" title="Add to Cart" class="btn">
+                               <span class="speed" ><?php echo __('Achat rapide'); ?></span> 
+                              </button>
+                       </form>
+                    </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+         </section>
+  <section class="mobile-section-select-renouard" >
+  <div class="content box-collateral-content" id="box-slide-item">
+   <div class="bx-wrapper" >
+        <div class="bx-viewport" >
+            <ul class="product-image-thumbs bxslider-prod" >
+                     
+              <?php  foreach ($collection as $product): ?> 
+                    <?php if($product->getSelectionRenouard()==1): ?>
+                    <li class="list-group-item"> 
+                        <a href="<?php echo $product->getProductUrl(); ?>" >
+                        <img src="<?php echo $block->getUrl('pub/media/catalog').'product'.$product->getImage(); ?>" width="377" height="351" class="img-responsive" >
+                        <p>
+                            <span> 
+                            <?php echo $product->getName(); ?>
+                            </span>
+                        </p>
+                         </a>
+                         <span class="hm-price"><?php echo ($product->getSpecialPrice()!=null)?ceil($product->getSpecialPrice())." ".$symbCurrency." - ".__('Prix de base* ').ceil($product->getPrice())." ".$symbCurrency: ceil($product->getPrice())." ".$symbCurrency;//$abstractProductBlock->getProductPrice($product) ?></span>
+                        
+                        <form data-role="tocart-form" action="<?php echo $listBlock->getAddToCartUrl($product); ?>" method="post"> 
+                            <?php echo $block->getBlockHtml('formkey')?>
+                              <button type="submit" title="Add to Cart" class="btn">
+                               <span class="speed" ><?php echo __('Achat rapide'); ?></span> 
+                              </button>
+                       </form>
+                    </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>    
+                
+             </ul>
+        </div>
+        <div class="bx-controls bx-has-controls-direction">
+            <!--div class="bx-controls-direction">
+                <i class="fa fa-angle-left" aria-hidden="true">
+                    
+                </i>
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+            </div --></div></div> 
+        <script>
+            (function ($j) {
+                $j('.bxslider-prod').bxSlider({
+                    infiniteLoop: false,
+                    minSlides: 4,
+                    maxSlides: 4,
+                    slideWidth: 200,
+                    slideMargin: 30,
+                    pager: false
+                });
+                var yuh = 355;
+            })(jQuery);
+        </script>
+    </div>
+    </section>
+         </div>
+    </div>
+</div>
+
