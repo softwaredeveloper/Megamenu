@@ -1,0 +1,154 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// @codingStandardsIgnoreFile
+?>
+<?php
+/**
+ * Top menu for store
+ *
+ * @var $block \Magento\Theme\Block\Html\Topmenu
+ */
+?>
+<?php
+$subActiveMenu = array();
+$class = "undefined";
+$classq = "undefined";
+?>
+<?php
+$_menu = $block->menuRenouard();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+if ($this->getRequest()->getControllerName() == "category") {
+    $category = $objectManager->get('Magento\Framework\Registry')->registry('current_category');
+    $classq = $category->getId();
+}
+if ($this->getRequest()->getModuleName() == "cms") {
+    $cmsPage = $objectManager->get('\Magento\Cms\Model\Page');
+    $classq = $cmsPage->getId();
+}
+?> 
+
+<div class="row row-top">
+    <div class="row-centered" >
+       <p><span class="h1" ><?php echo __("Menu"); ?></span></p>
+    </div>
+</div>
+<nav class="navigation" data-action="navigation" >
+    <ul class="nav navbar-nav" data-mage-init='{"menu":{"responsive":true, "expanded":true, "position":{"my":"left top","at":"left bottom"}}}' >
+      <?php foreach ($_menu as $key => $link): ?> 
+            <?php if ($link['category_id'] == 2) continue; ?>
+            <li  class="ui-menu-item parent" >
+               
+            <?php if ($block->collectionAllSubCategory($link['category_id'])->getChildrenCategories()->count() == 0 && $link['type'] != "cms_page"): ?>
+
+                    <a 
+                        href=' 
+        <?php
+        if ($link['type'] == "cms_page") {
+            echo $block->collectionAllPage($link['category_id']);
+        } else if ($link['type'] == "custom") {
+            echo $link['category_id'];
+        } else {
+            echo $block->collectionAllSubCategory($link['category_id'])->getUrl();
+        }
+        ?>'
+
+                        class="     <?php
+                echo (($link['type'] == "cms_page" && $classq == $link['category_id'] && $this->getRequest()->getModuleName() == "cms")) ? "current" : "";
+                echo (($link['type'] == "category" && $classq == $link['category_id'] && $this->getRequest()->getControllerName() != "page")) ? "current" : "";
+        ?>  
+                        dropdown-toggle" 
+                        data-toggle="dropdown" 
+                        role="button" 
+                        aria-expanded="false"
+                        >
+             <?php else: ?>
+                <a href="javascript:void(0);" >
+                     <span class="caret"></span>
+    <?php endif; ?>
+                    <?php echo $link['title']; ?>
+               </a> 
+              <?php if ($block->collectionAllSubCategory($link['category_id'])->getChildrenCategories()->count() > 0): ?>
+                    <ul class="dropdown-menu megamenu-content " >
+                        <li>
+                            <a href=' <?php
+                    if ($link['type'] == "cms_page") {
+                        echo $block->collectionAllPage($link['category_id']);
+                    } else if ($link['type'] == "custom") {
+                        echo $link['category_id'];
+                    } else {
+                        echo $block->collectionAllSubCategory($link['category_id'])->getUrl();
+                    }
+                    ?>'
+                               class="     <?php
+                               echo (($link['type'] == "cms_page" && $classq == $link['category_id'] && $this->getRequest()->getModuleName() == "cms")) ? "current" : "";
+                               echo (($link['type'] == "category" && $classq == $link['category_id'] && $this->getRequest()->getControllerName() != "page")) ? "current" : "";
+                               ?>  
+                               dropdown-toggle" 
+                               data-toggle="dropdown" 
+                               role="button" 
+                               aria-expanded="false"
+                               >
+        <?php echo __("Voir tout"); ?>
+                            </a> 
+                        </li>
+
+
+                        <li>
+                            <div class="row">
+        <?php echo ($link["submenuoption"] != null && $link["submenuoption"] != "") ? $link["submenuoption"] : ""; ?>
+                                <?php foreach ($block->collectionAllSubCategory($link['category_id'])->getChildrenCategories() as $items): ?>
+                                    <div class="col-lg-2">
+                                        <h3 class="title">
+                                            <a href="  <?php echo $items->getUrl(); ?>" alt=" <?php echo $items->getName(); ?>">
+            <?php echo $items->getName(); ?>
+                                            </a>
+                                        </h3>
+            <?php if ($block->collectionAllSubCategory($items->getId())->getChildrenCategories()->count() > 0): ?>
+                                            <div data-ride="carousel" class="carousel slide" id="myCarousel">
+
+                                                <ul>
+                <?php foreach ($block->collectionAllSubCategory($items->getId())->getChildrenCategories() as $items2): ?> 
+                                                        <li>
+
+                                                            <a href="  <?php echo $items2->getUrl(); ?>" alt=" <?php echo $items2->getName(); ?>" >
+                    <?php echo $items2->getName(); ?>
+                                                            </a>
+                                                                <?php if ($block->collectionAllSubCategory($items2->getId())->getChildrenCategories()->count() > 0): ?>
+                                                                <div data-ride="carousel" class="carousel slide" id="myCarousel">
+
+                                                                    <ul>
+                        <?php foreach ($block->collectionAllSubCategory($items2->getId())->getChildrenCategories() as $items3): ?> 
+                                                                            <li>
+
+                                                                                <a href="  <?php echo $items3->getUrl(); ?>" alt=" <?php echo $items3->getName(); ?>" >
+                            <?php echo $items3->getName(); ?>
+                                                                                </a>
+
+                                                                            </li>
+                        <?php endforeach; ?> 
+                                                                    </ul></div>
+                                                                    <?php endif; ?>
+                                                        </li>
+                                                        <?php endforeach; ?> 
+                                                </ul>
+                                            </div>
+            <?php endif; ?>
+                                    </div><!-- end col-4 -->
+                                    <?php endforeach; ?> 
+                            </div><!-- end row -->
+                        </li>
+                    </ul>
+    <?php endif; ?>
+
+            </li>
+<?php endforeach; ?>
+    </ul>
+    <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('custom-menu-mobile')->toHtml(); ?>
+    
+</nav>
+
+
+
